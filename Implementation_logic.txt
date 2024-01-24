@@ -1,0 +1,79 @@
+1. Data extraction and feed parsing
+
+Script (parser.py): Uses the feedparser library to read a list of supplied RSS feeds.
+
+parses every feed and pulls pertinent data, such as the title, content, publication date, and source URL, from every news story.
+uses the title and publication date to create a unique hash identifier (hash_id) in order to handle duplicate items from the same feed.
+
+2. Models.py - Database Storage Schema
+
+builds a SQLAlchemy model (NewsArticle) that reflects the PostgreSQL database's news_articles table's structure.
+uses hash_id as the primary key in order to guarantee uniqueness.
+keeps track of details including the category, source URL, title, and text as well as the publication date.
+Parser.py and tasks.py logic:
+
+makes use of SQLAlchemy to communicate with databases.
+
+checks the database to see if there are any duplicate articles before storing new ones.
+
+3. News processing and task queue configuration (tasks.py):
+
+Sets up Celery to handle news article asynchronous processing.
+creates a task queue to manage the tasks that need to be processed.
+uses Celery employees to take items out of the queue and carry out additional processing.
+Processing News (tasks.py):
+
+gives each article a categorization using an NLTK-trained NLP classifier.
+adds the appropriate category for every article to the database.
+
+4. Error Handling and Logging (tasks.py, app.py):
+
+enables logging to be used across the application to monitor events and any problems.
+records data in two distinct log files (tasks.log and app.log) to improve traceability.
+
+Error Management (tasks.py, app.py):
+
+gracefully resolves network connectivity problems and parser mistakes during RSS feed retrieval.
+
+logs errors to give information about possible problems that may arise during execution.
+Design Decisions
+
+
+1. The Flask of Technology Stack:
+
+Because of its ease of use and adaptability, it was chosen as the web framework for creating RESTful APIs.
+Ideal for more compact apps such as this news aggregator.
+Celery
+
+chosen due to its capacity for handling asynchronous operations, which is essential for processing news articles in the background effectively.
+SQL Alchemy:
+
+used to communicate with databases and offer an ORM (Object-Relational Mapping) method for using PostgreSQL. NLTK:
+
+used for content-based news article classification using natural language processing.
+
+2. Database Design Table Structure (models.py): Made to hold the fundamental data related to every news item.
+Uses a hash identifier (hash_id) as the primary key to ensure uniqueness and simplify data retrieval.
+
+3. Asynchronous Processing Accelerator for Task Queue: This feature increases scalability and
+ responsiveness by allowing the application to handle jobs asynchronously.
+
+4. NLP, or natural language processing
+Text Classification with NLTK:
+Selected due to its ease of use and integration.
+teaches a Naive Bayes classifier to classify news items into pre-established groups.
+
+In summary, the news aggregator software presents a practical method for gathering, 
+organising, and classifying news items from many RSS sources. By using appropriate logging and 
+error handling, the selected technology and design decisions seek to address potential problems and 
+offer a scalable and maintainable solution. NLP adds another level of intelligence to the process 
+of classifying articles according to their content.
+
+Future Improvements:
+
+Put user authentication into practice for customised news streams.
+To increase accuracy, increase the size of the NLP classifier's training dataset.
+Include a front-end interface so that users may interact and see news stories.
+Improve error handling so that users can receive more thorough feedback.
+
+
